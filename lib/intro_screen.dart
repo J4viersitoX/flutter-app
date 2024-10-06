@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:introduction_screen/introduction_screen.dart';
+import 'package:flutter_app/main_menu.dart';
 
 class MyIntroScreen extends StatefulWidget {
   const MyIntroScreen({super.key});
@@ -9,51 +9,46 @@ class MyIntroScreen extends StatefulWidget {
 }
 
 class MyIntroScreenState extends State<MyIntroScreen> {
-  final introKey = GlobalKey<IntroductionScreenState>();
-
   @override
   Widget build(BuildContext context) {
-    const bodyStyle = TextStyle(fontSize: 19.0);
-
-    const pageDecoration = PageDecoration(
-      titleTextStyle: TextStyle(fontSize: 28.0, fontWeight: FontWeight.w700),
-      //titlePadding: EdgeInsets.only(top: 50.0),
-      bodyTextStyle: bodyStyle,
-      bodyPadding: EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 16.0),
-      pageColor: Colors.white,
-      imagePadding: EdgeInsets.zero,
-      bodyAlignment: Alignment.center,
-    );
+    // double width = MediaQuery.sizeOf(context).width;
+    // double height = MediaQuery.sizeOf(context).height;
     
-    return IntroductionScreen(
-      key: introKey,
-      pages: [
-        PageViewModel(
-          title: "Te damos la bienvenida a",
-          bodyWidget: CircleAvatar(
-            maxRadius: 160.0,
-            child: Container(
-              padding: const EdgeInsets.only(bottom: 20.0),
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              constraints: BoxConstraints.expand(height: Theme.of(context).textTheme.headlineMedium!.fontSize! * 1.1 + 200.0,),
+              decoration: BoxDecoration(
+                color: Colors.green[400],
+                shape: BoxShape.circle,
+              ),
               child: const Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.lightbulb_outline_rounded, size: 100.0,),
-                  Text("<NombreApp>", style: TextStyle(fontSize: 40.0),),
+                  Icon(Icons.lightbulb_outline_rounded, size: 100,),
+                  Text("<NombreApp>", style: TextStyle(fontSize: 20),),
                 ],
               ),
             ),
-          ),
-          decoration: pageDecoration,
+            const SizedBox(height: 40.0),
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 40.0),
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => MainMenu()),
+                  );
+                },
+                child: const Expanded(child: Text("Comenzar el recorrido interactivo", style: TextStyle(fontSize: 20), textAlign: TextAlign.center,)),
+              ),
+            )
+          ],
         ),
-        PageViewModel(
-          title: "La 2da pagina",
-          body: "el otro cuerpo",
-          decoration: pageDecoration,
-        )
-      ],
-      done: const Text('Done!'),
-      onDone: () {},
-      showNextButton: false,
+      ),
     );
   }
 }
