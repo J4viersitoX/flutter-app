@@ -1,4 +1,7 @@
+import 'package:chat_gpt_sdk/chat_gpt_sdk.dart';
+import 'package:dash_chat_2/dash_chat_2.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app/openai_api_key.dart';
 
 class MainMenu extends StatefulWidget {
   const MainMenu({ super.key });
@@ -8,7 +11,21 @@ class MainMenu extends StatefulWidget {
 }
 
 class _MainMenuState extends State<MainMenu> {
+
+  final _openAI = OpenAI.instance.build(
+    token: OPENAI_API_KEY,
+    baseOption: HttpSetup(receiveTimeout: const Duration(seconds: 5)),
+    enableLog: true,
+  );
+  
+  final ChatUser _currentUser = ChatUser(id: '1', firstName: 'nombre', lastName: 'apellido');
+  final ChatUser _gptUser = ChatUser(id: '2', firstName: 'Chat', lastName: 'GPT');
+
+  List<ChatMessage> _messages = <ChatMessage>[];
+  List<ChatUser> _typingUsers = <ChatUser>[];
+
   int _selectedIdx = 1;
+
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
@@ -62,47 +79,54 @@ class _MainMenuState extends State<MainMenu> {
             ),
           ),
         ),
-        ListView.builder(
-          reverse: true,
-          itemCount: 2,
-          itemBuilder: (BuildContext context, int index) {
-            if (index == 0) {
-              return Align(
-                alignment: Alignment.centerRight,
-                child: Container(
-                  margin: const EdgeInsets.all(8.0),
-                  padding: const EdgeInsets.all(8.0),
-                  decoration: BoxDecoration(
-                    color: Colors.green[800],
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                  child: Text(
-                    'Hello',
-                    style: theme.textTheme.bodyLarge!
-                        .copyWith(color: theme.colorScheme.onPrimary),
-                  ),
-                ),
-              );
-            }
-            return Align(
-              alignment: Alignment.centerLeft,
-              child: Container(
-                margin: const EdgeInsets.all(8.0),
-                padding: const EdgeInsets.all(8.0),
-                decoration: BoxDecoration(
-                  color: Colors.green[800],
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                child: Text(
-                  'Hi!',
-                  style: theme.textTheme.bodyLarge!
-                      .copyWith(color: theme.colorScheme.onPrimary),
-                ),
-              ),
-            );
+        DashChat(
+          currentUser: _currentUser,
+          messageOptions: MessageOptions(
+            currentUserContainerColor: Colors.green[800],
+          ),
+          onSend: (ChatMessage msg) {
+            getChatResponse(msg);
           },
-        ),
+          messages: _messages,
+          typingUsers: _typingUsers,
+        )
       ][_selectedIdx],
     );
+  }
+
+  Future<void> getChatResponse(ChatMessage msg) async {
+    setState(() {
+      _messages.insert(0, msg);
+      _typingUsers.add(_gptUser);
+    });
+
+    List<Map<String, dynamic>> messagesHistory = _messages.reversed.toList().map((msg) {
+      if (msg.user == _currentUser) {
+        return Messages(role: Role.user, content: msg.text).toJson();
+      } else {
+        return Messages(role: Role.assistant, content: msg.text).toJson();
+      }
+    }).toList();
+    final request = ChatCompleteText(
+      model: Gpt4oMini2024ChatModel(),
+      messages: messagesHistory,
+      maxToken: 200,
+    );
+    final response = await _openAI.onChatCompletion(request: request);
+    for (var element in response!.choices) {
+      if (element.message != null) {
+        setState(() {
+          _messages.insert(
+            0,
+            ChatMessage(
+              user: _gptUser,
+              createdAt: DateTime.now(),
+              text: element.message!.content));
+        });
+      }
+    }
+    setState(() {
+      _typingUsers.remove(_gptUser);
+    });
   }
 }
