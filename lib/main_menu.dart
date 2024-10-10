@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/settings.dart';
 
 class MainMenu extends StatefulWidget {
   const MainMenu({ super.key });
@@ -21,7 +22,12 @@ class _MainMenuState extends State<MainMenu> {
         actions: [
           IconButton(
             icon: const Icon(Icons.settings),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => Settings()),
+              );
+            },
           )
         ],
       ),
