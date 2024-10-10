@@ -1,7 +1,7 @@
-import 'package:chat_gpt_sdk/chat_gpt_sdk.dart';
+//import 'package:chat_gpt_sdk/chat_gpt_sdk.dart';
 import 'package:dash_chat_2/dash_chat_2.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app/openai_api_key.dart';
+import 'package:flutter_gemini/flutter_gemini.dart';
 
 class MainMenu extends StatefulWidget {
   const MainMenu({ super.key });
@@ -12,14 +12,16 @@ class MainMenu extends StatefulWidget {
 
 class _MainMenuState extends State<MainMenu> {
 
-  final _openAI = OpenAI.instance.build(
-    token: OPENAI_API_KEY,
-    baseOption: HttpSetup(receiveTimeout: const Duration(seconds: 5)),
-    enableLog: true,
-  );
+  // final _openAI = OpenAI.instance.build(
+  //   token: OPENAI_API_KEY,
+  //   baseOption: HttpSetup(receiveTimeout: const Duration(seconds: 5)),
+  //   enableLog: true,
+  // );
+
+  final _gemini = Gemini.instance;
   
-  final ChatUser _currentUser = ChatUser(id: '1', firstName: 'nombre', lastName: 'apellido');
-  final ChatUser _gptUser = ChatUser(id: '2', firstName: 'Chat', lastName: 'GPT');
+  final ChatUser _currentUser = ChatUser(id: '1', firstName: 'user');
+  final ChatUser _AIUser = ChatUser(id: '2', firstName: 'AI');
 
   List<ChatMessage> _messages = <ChatMessage>[];
   List<ChatUser> _typingUsers = <ChatUser>[];
@@ -96,37 +98,33 @@ class _MainMenuState extends State<MainMenu> {
 
   Future<void> getChatResponse(ChatMessage msg) async {
     setState(() {
-      _messages.insert(0, msg);
-      _typingUsers.add(_gptUser);
+      _messages = [msg, ..._messages];
+      _typingUsers.add(_AIUser);
     });
-
-    List<Map<String, dynamic>> messagesHistory = _messages.reversed.toList().map((msg) {
-      if (msg.user == _currentUser) {
-        return Messages(role: Role.user, content: msg.text).toJson();
-      } else {
-        return Messages(role: Role.assistant, content: msg.text).toJson();
-      }
-    }).toList();
-    final request = ChatCompleteText(
-      model: Gpt4oMini2024ChatModel(),
-      messages: messagesHistory,
-      maxToken: 200,
-    );
-    final response = await _openAI.onChatCompletion(request: request);
-    for (var element in response!.choices) {
-      if (element.message != null) {
-        setState(() {
-          _messages.insert(
-            0,
-            ChatMessage(
-              user: _gptUser,
-              createdAt: DateTime.now(),
-              text: element.message!.content));
-        });
-      }
+    try {
+      String question = msg.text;
+      _gemini.streamGenerateContent(question, modelName: "models/gemini-1.5-flash").listen((event) {
+        ChatMessage? lastMessage = _messages.firstOrNull;
+        if (lastMessage != null && lastMessage.user == _AIUser) {
+          lastMessage = _messages.removeAt(0);
+          String response = event.content?.parts?.fold("", (previous, current) => "$previous ${current.text}") ?? "";
+          lastMessage.text += response;
+          setState(() {
+            _messages = [lastMessage!, ..._messages];
+          });
+        } else {
+          String response = event.content?.parts?.fold("", (previous, current) => "$previous ${current.text}") ?? "";
+          ChatMessage message = ChatMessage(user: _AIUser, createdAt: DateTime.now(), text: response);
+          setState(() {
+            _messages = [message, ..._messages];
+          });
+        }
+      });
+    } catch (e) {
+      print(e);
     }
     setState(() {
-      _typingUsers.remove(_gptUser);
+      _typingUsers.remove(_AIUser);
     });
   }
 }
