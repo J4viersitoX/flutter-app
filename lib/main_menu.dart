@@ -1,4 +1,3 @@
-//import 'package:chat_gpt_sdk/chat_gpt_sdk.dart';
 import 'package:dash_chat_2/dash_chat_2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
@@ -11,13 +10,6 @@ class MainMenu extends StatefulWidget {
 }
 
 class _MainMenuState extends State<MainMenu> {
-
-  // final _openAI = OpenAI.instance.build(
-  //   token: OPENAI_API_KEY,
-  //   baseOption: HttpSetup(receiveTimeout: const Duration(seconds: 5)),
-  //   enableLog: true,
-  // );
-
   final _gemini = Gemini.instance;
   
   final ChatUser _currentUser = ChatUser(id: '1', firstName: 'user');
