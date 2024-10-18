@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/theme.dart';
+import 'main.dart';
 
 class Settings extends StatefulWidget {
   const Settings({ super.key });
@@ -9,14 +9,14 @@ class Settings extends StatefulWidget {
 }
 
 class _SettingsState extends State<Settings> {
-  bool theme = true;
+  bool prendio = false;
+
   @override
   Widget build(BuildContext context) {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Opciones'),
-        
+        title: const Text('Opciones'),
       ),
       body: ListView(
         padding: const EdgeInsets.all(1),
@@ -28,7 +28,6 @@ class _SettingsState extends State<Settings> {
               Container(
                 padding: const EdgeInsets.only(left: 10),
                 height: 50,
-                color: Colors.white,
                 child: const Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
@@ -37,73 +36,25 @@ class _SettingsState extends State<Settings> {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.only(right: 10),
-                child: Align(
-                  alignment: Alignment.centerRight,
-                  child: Switch(
-                    // This bool value toggles the switch.
-                    value: theme,
-                    activeColor: Colors.grey,
-                    onChanged: (bool value) {
-                      // This is called when the user toggles the switch.
-                      setState(() {
-                        theme = value;
-                      });
-                    },
-                  )
-                
+                padding: const EdgeInsets.only(left: 10),
+                child: Switch(
+                  value: prendio,
+                  onChanged: (bool value){
+                    setState(() {
+                      prendio = value;
+                    });
+                    if (value){
+                      MyApp.of(context).changeTheme(ThemeMode.dark);
+                    }
+                    else {
+                      MyApp.of(context).changeTheme(ThemeMode.light);
+                    }
+                  }
                 )
-              )
-            ] 
-          ),
-          
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.only(left: 10),
-                height: 50,
-                color: Colors.white,
-                child: const Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'Formato de unidades'
-                  ),
-                ),
               ),
-            ],
-          ),
-
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.only(left: 10),
-                height: 50,
-                color: Colors.white,
-                child: const Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'Comuna'
-                  ),
-                ),
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.only(left: 10),
-                height: 50,
-                color: Colors.white,
-                child: const Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'Formato de unidades'
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
+            ]
+          )
+        ] 
       ),
     );
   }
