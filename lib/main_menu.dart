@@ -1,6 +1,7 @@
 import 'package:dash_chat_2/dash_chat_2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
+import 'menu_resumen.dart';
 
 class MainMenu extends StatefulWidget {
   const MainMenu({ super.key });
@@ -60,19 +61,14 @@ class _MainMenuState extends State<MainMenu> {
         },
       ),
       body: <Widget>[
+
+        // personalizacion (1)
         const Card(child: Text("WIP")),
-        Card(
-          shadowColor: Colors.transparent,
-          margin: const EdgeInsets.all(8.0),
-          child: SizedBox.expand(
-            child: Center(
-              child: Text(
-                'Home page',
-                style: theme.textTheme.titleLarge,
-              ),
-            ),
-          ),
-        ),
+
+        // resumen (2)
+        MenuResumen(),
+
+        // asistente (chat) (3)
         DashChat(
           currentUser: _currentUser,
           messageOptions: MessageOptions(
