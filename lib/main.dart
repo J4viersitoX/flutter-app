@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gemini/flutter_gemini.dart';
 import 'intro_screen.dart';
+import 'api_key.dart';
 
 void main() {
-  runApp(MyApp());
+  Gemini.init(apiKey: GEMINI_API_KEY, enableDebugging: true);
+  runApp(const MyApp());
 }
 
 class MyApp extends StatefulWidget {
