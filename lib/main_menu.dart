@@ -1,5 +1,6 @@
 import 'package:dash_chat_2/dash_chat_2.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app/settings.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
 import 'menu_resumen.dart';
 
@@ -33,7 +34,12 @@ class _MainMenuState extends State<MainMenu> {
         actions: [
           IconButton(
             icon: const Icon(Icons.settings),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => Settings()),
+              );
+            },
           )
         ],
       ),
