@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/lista_aparatos.dart';
 
 class MenuResumen extends StatefulWidget {
   const MenuResumen({super.key});
@@ -80,7 +81,12 @@ class _MenuResumenState extends State<MenuResumen> {
                 margin: const EdgeInsets.all(12.0),
                 child: ElevatedButton(
                   style: _gridBtnStyle,
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => ListaAparatos()),
+                    );
+                  },
                   child: const Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
