@@ -96,6 +96,21 @@ class _ItemAparatoState extends State<ItemAparato> with TickerProviderStateMixin
                           )
                         )
                       ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: Container(
+                          height: 26,
+                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                          decoration: BoxDecoration(
+                            borderRadius: const BorderRadius.all(Radius.circular(13.0)),
+                            color: Theme.of(context).colorScheme.surfaceContainerHighest
+                          ),
+                          child: Text("+ \$${widget.costoMes} CLP", style: const TextStyle(fontSize: 16))
+                        ),
+                      ),
                     )
                   ],
                 ),
@@ -131,13 +146,13 @@ class _ItemAparatoState extends State<ItemAparato> with TickerProviderStateMixin
                       ),
                     ),
                     Expanded(
-                      flex: 2,
-                      child: Text("${widget.modelo}\n${widget.potencia} W • ${widget.hrsSemana} h/sem", textAlign: TextAlign.center,)
+                      flex: 3,
+                      child: Text(
+                        "${widget.modelo}\n${widget.potencia} W • ${widget.hrsSemana} h/semana",
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(height: 2)
+                      )
                     ),
-                    Expanded(
-                      flex: 1,
-                      child: Text("\$${widget.costoMes}\nCLP", textAlign: TextAlign.center,)
-                    )
                   ],
                 ),
               ),
