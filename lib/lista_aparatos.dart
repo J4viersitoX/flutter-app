@@ -43,64 +43,62 @@ class _ItemAparatoState extends State<ItemAparato> with TickerProviderStateMixin
         padding: const EdgeInsets.all(6.0),
         child: Column(
           children: [
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 500),
-              curve: Curves.fastOutSlowIn,
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primary,
-                borderRadius: isExpanded ? const BorderRadius.vertical(top: Radius.circular(16.0)) : BorderRadius.circular(16.0)
-              ),
-              height: 40,
-              child: Row(
-                children: [
-                  SizedBox(
-                      width: 40,
-                      child: Center(
-                        child: Container(
-                          width: 26,
-                          height: 26,
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.surface,
-                            borderRadius: BorderRadius.circular(13)
-                          ),
-                          child: Center(
-                            child: IconButton(
-                              icon: const Icon(Icons.arrow_drop_down_outlined),
-                              color: Theme.of(context).colorScheme.primary,
-                              padding: EdgeInsets.zero,
-                              onPressed: () {
-                                if (isExpanded) {
-                                  _controller.reverse();
-                                } else {
-                                  _controller.forward();
-                                }
-                                setState(() {
-                                  isExpanded = !isExpanded;
-                                });
-                              },
-                            )
-                          ),
+            GestureDetector(
+              onTap: () {
+                if (isExpanded) {
+                  _controller.reverse();
+                } else {
+                  _controller.forward();
+                }
+                setState(() {
+                  isExpanded = !isExpanded;
+                });
+              },
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 500),
+                curve: Curves.fastOutSlowIn,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.primary,
+                  borderRadius: isExpanded ? const BorderRadius.vertical(top: Radius.circular(16.0)) : BorderRadius.circular(16.0)
+                ),
+                height: 40,
+                child: Row(
+                  children: [
+                    SizedBox(
+                        width: 40,
+                        child: Center(
+                          child: Container(
+                            width: 26,
+                            height: 26,
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).colorScheme.surface,
+                              borderRadius: BorderRadius.circular(13)
+                            ),
+                            child: Center(
+                              child: Icon(Icons.arrow_drop_down_outlined, color: Theme.of(context).colorScheme.primary),
+                            ),
+                          )
                         )
-                      )
-                    ),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Container(
-                          height: 26,
-                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                          decoration: BoxDecoration(
-                            borderRadius: const BorderRadius.all(Radius.circular(13.0)),
-                            color: Theme.of(context).colorScheme.surface
-                          ),
-                          child: Text(widget.tipo, style: const TextStyle(fontSize: 18),)
+                      ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Container(
+                            height: 26,
+                            padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                            decoration: BoxDecoration(
+                              borderRadius: const BorderRadius.all(Radius.circular(13.0)),
+                              color: Theme.of(context).colorScheme.surface
+                            ),
+                            child: Text(widget.tipo, style: const TextStyle(fontSize: 18),)
+                          )
                         )
-                      )
-                    ),
-                  )
-                ],
+                      ),
+                    )
+                  ],
+                ),
               ),
             ),
             SizeTransition(
