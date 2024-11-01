@@ -1,19 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class ItemAparato extends StatelessWidget {
+class ItemAparato extends StatefulWidget {
   const ItemAparato({
     super.key,
-    required this.rank,
-    required this.tipo,
+    required this.costoMes,
+    required this.hrsSemana,
     required this.imgPath,
     required this.modelo,
     required this.potencia,
-    required this.hrsSemana,
-    required this.costoMes
+    required this.tipo
   });
-
-  final int rank;
+  
   final String tipo;
   final String imgPath;
   final String modelo;
@@ -22,15 +20,35 @@ class ItemAparato extends StatelessWidget {
   final double costoMes;
 
   @override
+  State<ItemAparato> createState() => _ItemAparatoState();
+}
+
+class _ItemAparatoState extends State<ItemAparato> with TickerProviderStateMixin {
+  bool isExpanded = false;
+
+  late final AnimationController _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 500)
+    );
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Padding(
         padding: const EdgeInsets.all(6.0),
         child: Column(
           children: [
-            Container(
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 500),
+              curve: Curves.fastOutSlowIn,
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.primary,
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(16.0))
+                borderRadius: isExpanded ? const BorderRadius.vertical(top: Radius.circular(16.0)) : BorderRadius.circular(16.0)
               ),
               height: 40,
               child: Row(
@@ -46,14 +64,21 @@ class ItemAparato extends StatelessWidget {
                             borderRadius: BorderRadius.circular(13)
                           ),
                           child: Center(
-                            child: Text(
-                              "$rank",
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w600,
-                                color: Theme.of(context).colorScheme.primary
-                              ),
-                            ),
+                            child: IconButton(
+                              icon: const Icon(Icons.arrow_drop_down_outlined),
+                              color: Theme.of(context).colorScheme.primary,
+                              padding: EdgeInsets.zero,
+                              onPressed: () {
+                                if (isExpanded) {
+                                  _controller.reverse();
+                                } else {
+                                  _controller.forward();
+                                }
+                                setState(() {
+                                  isExpanded = !isExpanded;
+                                });
+                              },
+                            )
                           ),
                         )
                       )
@@ -70,7 +95,7 @@ class ItemAparato extends StatelessWidget {
                             borderRadius: const BorderRadius.all(Radius.circular(13.0)),
                             color: Theme.of(context).colorScheme.surface
                           ),
-                          child: Text(tipo, style: const TextStyle(fontSize: 18),)
+                          child: Text(widget.tipo, style: const TextStyle(fontSize: 18),)
                         )
                       )
                     ),
@@ -78,39 +103,45 @@ class ItemAparato extends StatelessWidget {
                 ],
               ),
             ),
-            Container(
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                borderRadius: const BorderRadius.vertical(bottom: Radius.circular(16.0))
+            SizeTransition(
+              sizeFactor: CurvedAnimation(
+                curve: Curves.fastOutSlowIn,
+                parent: _controller,
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Expanded(
-                    flex: 1,
-                    child: SizedBox(
-                      height: 120,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: SvgPicture.asset(
-                          imgPath,
-                          colorFilter: ColorFilter.mode(
-                            Theme.of(context).colorScheme.onSurface,
-                            BlendMode.srcIn
-                          )
-                        ),
-                      )
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                  borderRadius: const BorderRadius.vertical(bottom: Radius.circular(16.0))
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: SizedBox(
+                        height: 120,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: SvgPicture.asset(
+                            widget.imgPath,
+                            colorFilter: ColorFilter.mode(
+                              Theme.of(context).colorScheme.onSurface,
+                              BlendMode.srcIn
+                            )
+                          ),
+                        )
+                      ),
                     ),
-                  ),
-                  Expanded(
-                    flex: 2,
-                    child: Text("$modelo\n$potencia W • $hrsSemana h/sem", textAlign: TextAlign.center,)
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: Text("\$$costoMes\nCLP", textAlign: TextAlign.center,)
-                  )
-                ],
+                    Expanded(
+                      flex: 2,
+                      child: Text("${widget.modelo}\n${widget.potencia} W • ${widget.hrsSemana} h/sem", textAlign: TextAlign.center,)
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: Text("\$${widget.costoMes}\nCLP", textAlign: TextAlign.center,)
+                    )
+                  ],
+                ),
               ),
             )
           ],
@@ -133,14 +164,13 @@ class _ListaAparatosState extends State<ListaAparatos> {
         title: const Text("Lista Aparatos"),
       ),
       body: ListView(
-        children: <ItemAparato>[
+        children: const <ItemAparato>[
           ItemAparato(
             imgPath: "assets/images/refrigerator-2-svgrepo-com.svg",
             potencia: 150,
             costoMes: 5000,
             hrsSemana: 168,
             modelo: "Samsung galaxy refri+ ultra max",
-            rank: 1,
             tipo: "Refrigerador",
           ),
           ItemAparato(
@@ -149,7 +179,6 @@ class _ListaAparatosState extends State<ListaAparatos> {
             costoMes: 2000,
             hrsSemana: 30,
             modelo: "LG Tele+ OLED UltraHD 4k 90'",
-            rank: 2,
             tipo: "Televisor",
           ),
           ItemAparato(
@@ -158,7 +187,6 @@ class _ListaAparatosState extends State<ListaAparatos> {
             costoMes: 1500,
             hrsSemana: 10,
             modelo: "LG LavaMAX Turbo+ Ultra",
-            rank: 3,
             tipo: "Lavadora",
           )
         ],
