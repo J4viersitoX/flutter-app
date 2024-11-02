@@ -25,8 +25,15 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       home: MyIntroScreen(),
       themeMode: _themeMode,
-      theme: ThemeData(),
-      darkTheme: ThemeData.dark(),
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue)
+      ),
+      darkTheme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.blue,
+          brightness: Brightness.dark
+        ),
+      ),
     );
   }
   void changeTheme(ThemeMode themeMode){
