@@ -207,7 +207,7 @@ class _ListaAparatosState extends State<ListaAparatos> {
                               tipo: "Aparato",
                               isExpanded: true,
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 200,
                             )
                           ]
