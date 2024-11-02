@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class ItemAparato extends StatefulWidget {
-  const ItemAparato({
+  ItemAparato({
     super.key,
     required this.costoMes,
     required this.hrsSemana,
     required this.imgPath,
     required this.modelo,
     required this.potencia,
-    required this.tipo
+    required this.tipo,
+    this.isExpanded = false
   });
   
   final String tipo;
@@ -18,18 +19,25 @@ class ItemAparato extends StatefulWidget {
   final int potencia;
   final double hrsSemana;
   final double costoMes;
+  bool isExpanded;
 
   @override
   State<ItemAparato> createState() => _ItemAparatoState();
 }
 
 class _ItemAparatoState extends State<ItemAparato> with TickerProviderStateMixin {
-  bool isExpanded = false;
-
   late final AnimationController _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 500)
-    );
+  );
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.isExpanded) {
+      _controller.forward();
+    }
+  }
 
   @override
   void dispose() {
@@ -45,13 +53,13 @@ class _ItemAparatoState extends State<ItemAparato> with TickerProviderStateMixin
           children: [
             GestureDetector(
               onTap: () {
-                if (isExpanded) {
+                if (widget.isExpanded) {
                   _controller.reverse();
                 } else {
                   _controller.forward();
                 }
                 setState(() {
-                  isExpanded = !isExpanded;
+                  widget.isExpanded = !widget.isExpanded;
                 });
               },
               child: AnimatedContainer(
@@ -59,7 +67,7 @@ class _ItemAparatoState extends State<ItemAparato> with TickerProviderStateMixin
                 curve: Curves.fastOutSlowIn,
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.primary,
-                  borderRadius: isExpanded ? const BorderRadius.vertical(top: Radius.circular(16.0)) : BorderRadius.circular(16.0)
+                  borderRadius: widget.isExpanded ? const BorderRadius.vertical(top: Radius.circular(16.0)) : BorderRadius.circular(16.0)
                 ),
                 height: 40,
                 child: Row(
@@ -175,9 +183,59 @@ class _ListaAparatosState extends State<ListaAparatos> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Lista Aparatos"),
+        actions: [
+          IconButton(
+            onPressed: () {
+              showDialog<String>(
+                context: context,
+                builder: (BuildContext context) => Dialog(
+                  insetPadding: const EdgeInsets.all(24.0),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Stack(
+                          children: [
+                            ItemAparato(
+                              imgPath: "assets/images/refrigerator-2-svgrepo-com.svg",
+                              potencia: 1,
+                              costoMes: 1,
+                              hrsSemana: 1,
+                              modelo: "Modelo",
+                              tipo: "Aparato",
+                              isExpanded: true,
+                            ),
+                            SizedBox(
+                              height: 200,
+                            )
+                          ]
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: const Text("Cerrar"),
+                        )
+                      ],
+                    ),
+                  )
+                )
+              );
+            },
+            icon: const Icon(Icons.question_mark_rounded)
+          )
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          
+        },
+        child: const Icon(Icons.add),
       ),
       body: ListView(
-        children: const <ItemAparato>[
+        children: <ItemAparato>[
           ItemAparato(
             imgPath: "assets/images/refrigerator-2-svgrepo-com.svg",
             potencia: 150,
