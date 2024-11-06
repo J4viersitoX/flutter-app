@@ -65,12 +65,10 @@ class MyIntroScreenState extends State<MyIntroScreen> {
                 style: ButtonStyle(
                   backgroundColor: WidgetStatePropertyAll(Theme.of(context).colorScheme.primaryContainer)
                 ),
-                child: Expanded(
-                  child: Text(
-                    "Comenzar el recorrido interactivo",
-                    style: TextStyle(fontSize: 20, color: Theme.of(context).colorScheme.onPrimaryContainer),
-                    textAlign: TextAlign.center
-                  )
+                child: Text(
+                  "Comenzar el recorrido interactivo",
+                  style: TextStyle(fontSize: 20, color: Theme.of(context).colorScheme.onPrimaryContainer),
+                  textAlign: TextAlign.center
                 ),
               ),
             )
