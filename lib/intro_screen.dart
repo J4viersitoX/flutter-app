@@ -22,14 +22,33 @@ class MyIntroScreenState extends State<MyIntroScreen> {
             Container(
               constraints: BoxConstraints.expand(height: Theme.of(context).textTheme.headlineMedium!.fontSize! * 1.1 + 200.0,),
               decoration: BoxDecoration(
-                color: Colors.green[400],
+                color: Theme.of(context).colorScheme.primary,
                 shape: BoxShape.circle,
               ),
-              child: const Column(
+              child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.lightbulb_outline_rounded, size: 100,),
-                  Text("<NombreApp>", style: TextStyle(fontSize: 20),),
+                  const Expanded(
+                    flex: 4,
+                    child: Padding(
+                      padding: EdgeInsets.all(10.0),
+                      child: Image(
+                        image: AssetImage("assets/images/Logo-transparente.png"),
+                        fit: BoxFit.contain
+                      ),
+                    )
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: Text(
+                      "EnergIA",
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: Theme.of(context).colorScheme.onPrimary,
+                        fontWeight: FontWeight.bold
+                      )
+                    )
+                  ),
                 ],
               ),
             ),
@@ -43,7 +62,14 @@ class MyIntroScreenState extends State<MyIntroScreen> {
                     MaterialPageRoute(builder: (context) => MainMenu()),
                   );
                 },
-                child: const Expanded(child: Text("Comenzar el recorrido interactivo", style: TextStyle(fontSize: 20), textAlign: TextAlign.center,)),
+                style: ButtonStyle(
+                  backgroundColor: WidgetStatePropertyAll(Theme.of(context).colorScheme.primaryContainer)
+                ),
+                child: Text(
+                  "Comenzar el recorrido interactivo",
+                  style: TextStyle(fontSize: 20, color: Theme.of(context).colorScheme.onPrimaryContainer),
+                  textAlign: TextAlign.center
+                ),
               ),
             )
           ],

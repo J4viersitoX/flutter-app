@@ -27,13 +27,13 @@ class _MainMenuState extends State<MainMenu> {
     final ThemeData theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text("test"),
+        title: Text("EnergIA", style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),),
         centerTitle: true,
-        backgroundColor: Colors.green[200],
+        backgroundColor: Theme.of(context).colorScheme.primary,
         leading: const SizedBox(width: 0),
         actions: [
           IconButton(
-            icon: const Icon(Icons.settings),
+            icon: Icon(Icons.settings, color: Theme.of(context).colorScheme.onPrimary,),
             onPressed: () {
               Navigator.push(
                 context,
@@ -59,7 +59,7 @@ class _MainMenuState extends State<MainMenu> {
           )
         ],
         currentIndex: _selectedIdx,
-        selectedItemColor: Colors.green[400],
+        selectedItemColor: Theme.of(context).colorScheme.primary,
         onTap: (int index) {
           setState(() {
             _selectedIdx = index;
@@ -69,7 +69,7 @@ class _MainMenuState extends State<MainMenu> {
       body: <Widget>[
 
         // personalizacion (1)
-        const Card(child: Text("WIP")),
+        const Center(child: Text("En desarrollo!!!")),
 
         // resumen (2)
         MenuResumen(),
@@ -78,7 +78,7 @@ class _MainMenuState extends State<MainMenu> {
         DashChat(
           currentUser: _currentUser,
           messageOptions: MessageOptions(
-            currentUserContainerColor: Colors.green[800],
+            currentUserContainerColor: Theme.of(context).colorScheme.primary,
           ),
           onSend: (ChatMessage msg) {
             getChatResponse(msg);
