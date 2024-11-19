@@ -36,20 +36,33 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
 
   final List<String> displayedMessages = [];
   final ScrollController _scrollController = ScrollController();
-  String currentMessage = "";
+  List<String> currentWords = [];
   int messageIndex = 0;
   int wordIndex = 0;
+  bool _shouldAutoscroll = true;
 
   @override
   void initState() {
     super.initState();
+    _scrollController.addListener(_onScroll);
     _startChat();
   }
 
   @override
   void dispose() {
+    _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
     super.dispose();
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.atEdge) {
+      if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+        _shouldAutoscroll = true; // Re-enable autoscroll if user is at the bottom
+      }
+    } else {
+      _shouldAutoscroll = false; // Disable autoscroll if user scrolls up
+    }
   }
 
   void _startChat() {
@@ -59,14 +72,14 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
 
         if (wordIndex < words.length) {
           setState(() {
-            currentMessage += "${words[wordIndex]}${wordIndex + 1 == words.length ? "" : " "}";
+            currentWords.add(words[wordIndex]);
             wordIndex++;
           });
           _scrollToBottom();
         } else {
           setState(() {
-            displayedMessages.add(currentMessage.trim());
-            currentMessage = "";
+            displayedMessages.add(messages[messageIndex]);
+            currentWords.clear();
             wordIndex = 0;
             messageIndex++;
           });
@@ -81,6 +94,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
   }
 
   void _scrollToBottom() {
+    if (!_shouldAutoscroll) return;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_scrollController.hasClients) {
         _scrollController.animateTo(
@@ -96,13 +110,15 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return ListView.builder(
       controller: _scrollController,
-      itemCount: displayedMessages.length + (currentMessage.isNotEmpty ? 1 : 0),
+      itemCount: displayedMessages.length + 1,
       itemBuilder: (context, index) {
         if (index < displayedMessages.length) {
           return _buildMessageTile(displayedMessages[index], _isUser1(index));
+        } else if (currentWords.isNotEmpty) {
+          return _buildCurrentMessageTile(currentWords, _isUser1(index));
         } else {
-          return _buildCurrentMessageTile(currentMessage, _isUser1(index));
-          }
+          return SizedBox.shrink();
+        }
       },
     );
   }
@@ -139,7 +155,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildCurrentMessageTile(String message, bool isUser1) {
+  Widget _buildCurrentMessageTile(List<String> words, bool isUser1) {
     return _AnimatedMessageTile(
       isUser1: isUser1,
       child: Align(
@@ -156,15 +172,68 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
               BorderRadius.only(bottomRight: Radius.circular(8))
             ),
             ),
-            child: Text(
-              message,
-              textAlign: isUser1 ? TextAlign.left : TextAlign.right,
-              style: TextStyle(
-                fontSize: 16,
-                color: isUser1 ? Theme.of(context).colorScheme.onSecondary : Theme.of(context).colorScheme.onPrimary
-              )
+            child: Wrap(
+              alignment: isUser1 ? WrapAlignment.start : WrapAlignment.end,
+              children: words.map((word) {
+                return _AnimatedWord(word: word, isUser1: isUser1);
+              }).toList(),
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _AnimatedWord extends StatefulWidget {
+  final String word;
+  final bool isUser1;
+
+  const _AnimatedWord({required this.word, required this.isUser1});
+
+  @override
+  State<_AnimatedWord> createState() => _AnimatedWordState();
+}
+
+class _AnimatedWordState extends State<_AnimatedWord>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+
+    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
+    );
+
+    _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ScaleTransition(
+      scale: _scaleAnimation,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 2.0),
+        child: Text(
+          widget.word,
+          textAlign: widget.isUser1 ? TextAlign.left : TextAlign.right,
+          style: TextStyle(
+            fontSize: 16,
+            color: widget.isUser1 ? Theme.of(context).colorScheme.onSecondary : Theme.of(context).colorScheme.onPrimary
+          )
         ),
       ),
     );
