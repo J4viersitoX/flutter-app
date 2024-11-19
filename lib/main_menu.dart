@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/settings.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
 import 'menu_resumen.dart';
+import 'chat.dart';
 
 class MainMenu extends StatefulWidget {
   const MainMenu({ super.key });
@@ -75,17 +76,7 @@ class _MainMenuState extends State<MainMenu> {
         MenuResumen(),
 
         // asistente (chat) (3)
-        DashChat(
-          currentUser: _currentUser,
-          messageOptions: MessageOptions(
-            currentUserContainerColor: Theme.of(context).colorScheme.primary,
-          ),
-          onSend: (ChatMessage msg) {
-            getChatResponse(msg);
-          },
-          messages: _messages,
-          typingUsers: _typingUsers,
-        )
+        ChatScreen()
       ][_selectedIdx],
     );
   }
