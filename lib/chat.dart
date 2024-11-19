@@ -136,7 +136,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
         child: Container(
           padding: EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: isUser1 ? Theme.of(context).colorScheme.secondary : Theme.of(context).colorScheme.primary,
+            color: isUser1 ? Theme.of(context).colorScheme.secondaryContainer : Theme.of(context).colorScheme.primaryContainer,
             borderRadius: BorderRadius.circular(8).subtract(isUser1 ?
               BorderRadius.only(bottomLeft: Radius.circular(8)) :
               BorderRadius.only(bottomRight: Radius.circular(8))
@@ -147,7 +147,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
             textAlign: isUser1 ? TextAlign.left : TextAlign.right,
             style: TextStyle(
               fontSize: 16,
-              color: isUser1 ? Theme.of(context).colorScheme.onSecondary : Theme.of(context).colorScheme.onPrimary
+              color: isUser1 ? Theme.of(context).colorScheme.onSecondaryContainer : Theme.of(context).colorScheme.onPrimaryContainer
             )
           ),
         ),
@@ -166,7 +166,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
           child: Container(
             padding: EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: isUser1 ? Theme.of(context).colorScheme.secondary : Theme.of(context).colorScheme.primary,
+              color: isUser1 ? Theme.of(context).colorScheme.secondaryContainer : Theme.of(context).colorScheme.primaryContainer,
               borderRadius: BorderRadius.circular(8).subtract(isUser1 ?
               BorderRadius.only(bottomLeft: Radius.circular(8)) :
               BorderRadius.only(bottomRight: Radius.circular(8))
@@ -232,7 +232,7 @@ class _AnimatedWordState extends State<_AnimatedWord>
           textAlign: widget.isUser1 ? TextAlign.left : TextAlign.right,
           style: TextStyle(
             fontSize: 16,
-            color: widget.isUser1 ? Theme.of(context).colorScheme.onSecondary : Theme.of(context).colorScheme.onPrimary
+            color: widget.isUser1 ? Theme.of(context).colorScheme.onSecondaryContainer : Theme.of(context).colorScheme.onPrimaryContainer
           )
         ),
       ),
