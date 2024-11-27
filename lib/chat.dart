@@ -67,7 +67,8 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
 
   void _startChat() {
     Timer.periodic(Duration(milliseconds: 200), (timer) {
-      if (messageIndex < messages.length) {
+      // Cancel writing the message if ChatScreen is not mounted in the tree
+      if (messageIndex < messages.length && mounted) {
         final words = messages[messageIndex].split(' ');
 
         if (wordIndex < words.length) {
