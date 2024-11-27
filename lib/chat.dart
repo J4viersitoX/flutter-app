@@ -2,6 +2,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 class ChatScreen extends StatefulWidget {
+  const ChatScreen({super.key});
+
   @override
   _ChatScreenState createState() => _ChatScreenState();
 }
@@ -66,7 +68,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
   }
 
   void _startChat() {
-    Timer.periodic(Duration(milliseconds: 200), (timer) {
+    Timer.periodic(const Duration(milliseconds: 200), (timer) {
       // Cancel writing the message if ChatScreen is not mounted in the tree
       if (messageIndex < messages.length && mounted) {
         final words = messages[messageIndex].split(' ');
@@ -86,7 +88,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
           });
           _scrollToBottom();
           timer.cancel();
-          Future.delayed(Duration(seconds: 2), () => _startChat());
+          Future.delayed(const Duration(seconds: 2), () => _startChat());
         }
       } else {
         timer.cancel();
@@ -100,7 +102,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
       if (_scrollController.hasClients) {
         _scrollController.animateTo(
           _scrollController.position.maxScrollExtent,
-          duration: Duration(milliseconds: 300),
+          duration: const Duration(milliseconds: 300),
           curve: Curves.easeOut,
         );
       }
@@ -109,18 +111,41 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      controller: _scrollController,
-      itemCount: displayedMessages.length + 1,
-      itemBuilder: (context, index) {
-        if (index < displayedMessages.length) {
-          return _buildMessageTile(displayedMessages[index], _isUser1(index));
-        } else if (currentWords.isNotEmpty) {
-          return _buildCurrentMessageTile(currentWords, _isUser1(index));
-        } else {
-          return SizedBox.shrink();
-        }
-      },
+    return Column(
+      children: [
+        Expanded(
+          child: ListView.builder(
+            controller: _scrollController,
+            itemCount: displayedMessages.length + 1,
+            itemBuilder: (context, index) {
+              if (index < displayedMessages.length) {
+                return _buildMessageTile(displayedMessages[index], _isUser1(index));
+              } else if (currentWords.isNotEmpty) {
+                return _buildCurrentMessageTile(currentWords, _isUser1(index));
+              } else {
+                return const SizedBox.shrink();
+              }
+            },
+          ),
+        ),
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20.0),
+            color: Theme.of(context).colorScheme.surfaceContainerHighest
+          ),
+          constraints: const BoxConstraints.expand(height: 40),
+          margin: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+          child: Text(
+            "Escribir mensaje...",
+            textAlign: TextAlign.left,
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.outline,
+              fontSize: 16
+            ),
+          ),
+        )
+      ]
     );
   }
 
@@ -133,14 +158,14 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
       alignment: isUser1 ? Alignment.centerLeft : Alignment.centerRight,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0)
-          .add(isUser1 ? EdgeInsets.only(right: 80.0) : EdgeInsets.only(left: 80.0)),
+          .add(isUser1 ? const EdgeInsets.only(right: 80.0) : const EdgeInsets.only(left: 80.0)),
         child: Container(
-          padding: EdgeInsets.all(12),
+          padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
             color: isUser1 ? Theme.of(context).colorScheme.secondaryContainer : Theme.of(context).colorScheme.primaryContainer,
             borderRadius: BorderRadius.circular(8).subtract(isUser1 ?
-              BorderRadius.only(bottomLeft: Radius.circular(8)) :
-              BorderRadius.only(bottomRight: Radius.circular(8))
+              const BorderRadius.only(bottomLeft: Radius.circular(8)) :
+              const BorderRadius.only(bottomRight: Radius.circular(8))
             ),
           ),
           child: Text(
@@ -163,14 +188,14 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
         alignment: isUser1 ? Alignment.centerLeft : Alignment.centerRight,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0)
-            .add(isUser1 ? EdgeInsets.only(right: 80.0) : EdgeInsets.only(left: 80.0)),
+            .add(isUser1 ? const EdgeInsets.only(right: 80.0) : const EdgeInsets.only(left: 80.0)),
           child: Container(
-            padding: EdgeInsets.all(12),
+            padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
               color: isUser1 ? Theme.of(context).colorScheme.secondaryContainer : Theme.of(context).colorScheme.primaryContainer,
               borderRadius: BorderRadius.circular(8).subtract(isUser1 ?
-              BorderRadius.only(bottomLeft: Radius.circular(8)) :
-              BorderRadius.only(bottomRight: Radius.circular(8))
+              const BorderRadius.only(bottomLeft: Radius.circular(8)) :
+              const BorderRadius.only(bottomRight: Radius.circular(8))
             ),
             ),
             child: Wrap(
@@ -266,7 +291,7 @@ class _AnimatedMessageTileState extends State<_AnimatedMessageTile>
 
     _offsetAnimation = Tween<Offset>(
       begin: Offset(widget.isUser1 ? -1.0 : 1.0, 0.0), // Slide in from the corresponding side
-      end: Offset(0.0, 0.0),
+      end: const Offset(0.0, 0.0),
     ).animate(CurvedAnimation(
       parent: _controller,
       curve: Curves.easeOut,
